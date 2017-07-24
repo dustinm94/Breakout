@@ -61,5 +61,11 @@ public class Ball extends Entity {
 		entCollision.setLocation( (int) xPos, (int) yPos);
 		
 	}
+	public void changeVelocity(int x, int y) {
+		// changes the velocity of the ball. this is the ground work for when it hits bricks etc.
+		
+		xMove *= x;
+		yMove *= y;
+	}
 
 }

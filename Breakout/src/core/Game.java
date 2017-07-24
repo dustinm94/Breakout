@@ -1,13 +1,15 @@
 package core;
 
 import javax.swing.*;
-
-import Entity.Ball;
-import Entity.Player;
-import Inputs.InputHandler;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
+import Entity.Ball;
+import Entity.Brick;
+import Entity.Player;
+import Inputs.InputHandler;
 
 
 
@@ -33,7 +35,8 @@ public class Game implements Runnable {
 	
 	//Entity
 	public Player player;
-	Ball gameBall;
+	public Ball gameBall;
+	public ArrayList<Brick> brickList;
 	
 	//Inputs
 	public InputHandler keys;
@@ -79,42 +82,68 @@ public class Game implements Runnable {
 		frame = new JFrame(windowName);
 		frame.setVisible(true);
 		frame.setSize(width, height);
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Create Canvas
 		canvas = new Canvas();
 		canvas.setSize(gameDim);
+		canvas.setPreferredSize(gameDim);
+		canvas.setMaximumSize(gameDim);
+		canvas.setMinimumSize(gameDim);
 		frame.add(canvas);
 		
 		//Entity
 		player = new Player(this);
 		gameBall = new Ball(this);
+		brickList = new ArrayList<Brick>();
+		spawnBricks();
 		
 		//Rendering
 		canvas.createBufferStrategy(3);
-		BS = canvas.getBufferStrategy();
-		g = (Graphics2D) BS.getDrawGraphics();
+
 		
 		//Input
 		keys = new InputHandler(canvas);
 		canvas.requestFocus();
 	}
 	
+	private void spawnBricks() {
+		//spawns bricks in random colors 16x10 for a total of 160
+		for(int x = 0; x < 16; ++x) {
+			for(int y = 0; y < 10; ++y) {
+				brickList.add(new Brick(x * 40, y * 12, this));
+			}
+		}
+	}
+	
 	private void update() {
 		player.update();
 		gameBall.update();
+		for(Brick b : brickList) {
+			b.update();
+		}
+		for(int i = 0; i < brickList.size(); ++i) {
+			if(brickList.get(i).deadBrick)
+				brickList.remove(i);
+		}
 	}
 	
 	private void render() {
+		BS = canvas.getBufferStrategy();
+		g = (Graphics2D) BS.getDrawGraphics();
 		if(BS == null) {
 			canvas.createBufferStrategy(3);
 			return;
 		}
 		g.drawImage(img, 0, 0, null);
 		
-		//important to render the player ONTOP of the background. so it gets rendered behind.
+		//important to render the player ONTOP of the background. 
 		player.render(g);
 		gameBall.render(g);
+		for(Brick b : brickList)
+			b.render(g);
+		
 		BS.show();
 	}
 	
