@@ -15,9 +15,11 @@ public class InputHandler implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_A); {
 			left = true;
+			right = false;
 		}
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
 			right = true;
+			left = false;
 		}
 	}
 	public void keyReleased(KeyEvent e) {
